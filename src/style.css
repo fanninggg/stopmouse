@@ -76,6 +76,7 @@ section { display: flex; flex-direction: column; gap: 10px }
 .pill { min-height: 44px; padding: 0 16px; border-radius: 22px; background: var(--raised); font-size: 14px; font-weight: 600 }
 .primary { min-height: 54px; padding: 0 24px; border-radius: 27px; background: var(--action); font-size: 16px; font-weight: 700; color: var(--ink) }
 .ghost { min-height: 52px; border-radius: 26px; border: 1px solid #4E4144; font-size: 15px; font-weight: 600 }
+.link { min-height: 44px; padding: 0 8px; font-size: 13px; font-weight: 500; color: var(--muted); text-decoration: underline }
 .back { min-height: 44px; display: flex; align-items: center; gap: 4px; padding-right: 8px; font-size: 15px; font-weight: 600 }
 .toggle { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid var(--field); color: #A09391 }
 .toggle.in[aria-pressed=true] { background: var(--action); color: var(--ink); border-color: transparent }

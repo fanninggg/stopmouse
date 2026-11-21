@@ -28,7 +28,7 @@ export default function Team({ id }) {
       <nav className="row">
         <a href="#/" className="back"><Icon d={I.back} size={20} w={2.2} />This week</a>
         <span className="row">
-          {me.team !== id && <button className="pill" onClick={() => join(id)}>Join team</button>}
+          {me.team !== id && <button className="link" onClick={() => join(id)}>Switch team</button>}
           {isAdmin && <button className="pill" onClick={rename}>Edit team</button>}
         </span>
       </nav>
