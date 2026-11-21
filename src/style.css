@@ -87,7 +87,8 @@ section { display: flex; flex-direction: column; gap: 10px }
 
 .match { display: grid; grid-template-columns: 56px minmax(0, 1fr) 16px minmax(0, 1fr); gap: 8px }
 .match.result { grid-template-columns: minmax(0, 1fr) 64px minmax(0, 1fr) }
-.match > :nth-last-child(2) { text-align: center }
+.mid { text-align: center }
+.where { grid-column: 2 / -1; text-align: center }
 .match .num { font-size: 22px }
 .time { font-weight: 600 }
 .side { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600 }

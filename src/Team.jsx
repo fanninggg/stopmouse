@@ -9,10 +9,12 @@ const Toggle = ({ kind, d, label, pressed, ...props }) => (
 )
 
 export default function Team({ id }) {
-  const { teams, users, game, me, isAdmin, open, join, saveGame } = useApp()
+  const { teams, users, fixtures, game, me, isAdmin, open, join, saveGame } = useApp()
   const t = teams.find(t => t.id === id)
   if (!t) return null
 
+  const match = fixtures.find(f => f.date === game.date && [f.home, f.away].includes(id))
+  const rival = match && teams.find(r => r.id === (match.home === id ? match.away : match.home))
   const players = users.filter(u => u.team === id)
   const inCount = players.filter(u => u.status === 'in').length
   const setStatus = (u, status) => updateDoc(doc(db, 'users', u.id), { status: u.status === status ? '' : status })
@@ -34,13 +36,17 @@ export default function Team({ id }) {
       </nav>
 
       <header className="stack">
-        <div className="row start">
-          <Bib t={t} size="xl" />
-          <div className="stack">
-            <h1>{t.name}</h1>
-            <p className="muted">{fmtDate(game.date)} · {fmtTime(game.time)}</p>
+        <p className="eyebrow muted">{t.name}</p>
+        {rival ? (
+          <div className="row start">
+            <Bib t={rival} size="xl" />
+            <div className="stack">
+              <h1>v {rival.name}</h1>
+              <p className="muted">{fmtDate(match.date)} · {fmtTime(match.time)}</p>
+              <p className="venue muted"><Icon d={I.pin} size={16} />{match.venue}</p>
+            </div>
           </div>
-        </div>
+        ) : <h1>No game this week</h1>}
         <p><span className="num">{inCount} of {game.perTeam}</span> <span className="muted">in</span></p>
         <div className="segs" style={{ gridTemplateColumns: `repeat(${game.perTeam}, 1fr)` }}>
           {Array.from({ length: game.perTeam }, (_, i) => <span key={i} className={i < inCount ? 'on' : ''} />)}

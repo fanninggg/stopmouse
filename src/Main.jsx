@@ -2,14 +2,13 @@ import { useApp, Icon, I, Bib, fmtDate, fmtTime, initials } from './ui'
 
 const addWeek = date => new Date(Date.parse(date) + 7 * 864e5).toISOString().slice(0, 10)
 
-function TeamRow({ t, onClick }) {
+function TeamRow({ t }) {
   const { users, game } = useApp()
   const players = users.filter(u => u.team === t.id)
   const playing = players.filter(u => u.status === 'in')
   const waiting = players.filter(u => !u.status).length
-  const Tag = onClick ? 'button' : 'a'
   return (
-    <Tag className="item" {...(onClick ? { onClick } : { href: `#/team/${t.id}` })}>
+    <a className="item" href={`#/team/${t.id}`}>
       <Bib t={t} size="lg" />
       <span className="grow stack">
         <span className="name">{t.name}</span>
@@ -23,18 +22,29 @@ function TeamRow({ t, onClick }) {
         <span className="bar"><span style={{ width: `${Math.min(100, playing.length / game.perTeam * 100)}%` }} /></span>
       </span>
       <span className="faint"><Icon d={I.chevron} w={2.2} /></span>
-    </Tag>
+    </a>
   )
 }
 
 export function Join() {
-  const { teams, join } = useApp()
+  const { teams, users, join } = useApp()
   return (
     <>
       <p className="wordmark">StopMouse</p>
       <section>
         <h2>Pick your team</h2>
-        <div className="card">{teams.map(t => <TeamRow key={t.id} t={t} onClick={() => join(t.id)} />)}</div>
+        <div className="card">
+          {teams.map(t => {
+            const count = users.filter(u => u.team === t.id).length
+            return (
+              <button key={t.id} className="item" onClick={() => join(t.id)}>
+                <Bib t={t} size="lg" />
+                <span className="grow name">{t.name}</span>
+                <span className="muted small">{count} {count === 1 ? 'player' : 'players'}</span>
+              </button>
+            )
+          })}
+        </div>
       </section>
     </>
   )

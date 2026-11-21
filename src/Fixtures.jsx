@@ -11,12 +11,13 @@ const byDate = (list, newestFirst) =>
 function useFixtureSheet() {
   const { teams, game, open } = useApp()
   const options = teams.map(t => ({ value: t.id, label: t.name }))
-  return (f = { date: game.date, time: game.time, home: teams[0].id, away: teams[1].id }) => open({
+  return (f = { date: game.date, time: game.time, venue: game.venue, home: teams[0].id, away: teams[1].id }) => open({
     title: f.id ? 'Fixture' : 'Add fixture',
     values: f,
     fields: [
       { key: 'date', label: 'Date', type: 'date', half: true },
       { key: 'time', label: 'Kick-off', type: 'time', half: true },
+      { key: 'venue', label: 'Where' },
       { key: 'home', label: 'Home', options, half: true },
       { key: 'away', label: 'Away', options, half: true },
       { key: 'hs', label: 'Home score', type: 'number', optional: true, half: true },
@@ -37,8 +38,9 @@ function Match({ f }) {
     <button className={`item match ${done ? 'result' : ''}`} disabled={!isAdmin} onClick={() => edit(f)}>
       {!done && <span className="muted small time">{fmtTime(f.time)}</span>}
       <Side t={team(f.home)} right cls={outcome(f.hs - f.as)} />
-      <span className={done ? 'num' : 'muted small'}>{done ? `${f.hs} – ${f.as}` : 'v'}</span>
+      <span className={done ? 'num mid' : 'muted small mid'}>{done ? `${f.hs} – ${f.as}` : 'v'}</span>
       <Side t={team(f.away)} cls={outcome(f.as - f.hs)} />
+      {!done && <span className="muted small where">{f.venue}</span>}
     </button>
   )
 }
@@ -50,7 +52,7 @@ export default function Fixtures() {
     <>
       <header className="stack">
         <h1>Fixtures</h1>
-        <p className="muted">{game.venue}</p>
+        <p className="muted">{game.name}</p>
       </header>
       {byDate(fixtures.filter(f => !played(f))).map(([date, list]) => (
         <Week key={date} title={fmtDate(date)} badge={date === game.date && 'This week'}>
