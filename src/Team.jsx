@@ -43,7 +43,7 @@ export default function Team({ id }) {
         </div>
         <p><span className="num">{inCount} of {game.perTeam}</span> <span className="muted">in</span></p>
         <div className="segs" style={{ gridTemplateColumns: `repeat(${game.perTeam}, 1fr)` }}>
-          {Array.from({ length: game.perTeam }, (_, i) => <span key={i} style={{ background: i < inCount ? t.color : undefined }} />)}
+          {Array.from({ length: game.perTeam }, (_, i) => <span key={i} className={i < inCount ? 'on' : ''} />)}
         </div>
       </header>
 

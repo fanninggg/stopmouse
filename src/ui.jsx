@@ -34,7 +34,7 @@ export const Icon = ({ d, size = 18, w = 2 }) => (
   </svg>
 )
 
-export const Bib = ({ t, size = '' }) => <span className={`bib ${size}`} style={{ background: t.color }}>{t.name[0]}</span>
+export const Bib = ({ t, size = '' }) => <span className={`bib ${size}`}>{t.name[0]}</span>
 
 export const Side = ({ t, right, cls = '' }) => (
   <span className={`side ${right ? 'right' : ''} ${cls}`}>{right && t.name}<Bib t={t} />{!right && t.name}</span>

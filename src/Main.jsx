@@ -20,7 +20,7 @@ function TeamRow({ t, onClick }) {
       </span>
       <span className="score">
         <span className="num">{playing.length}/{game.perTeam}</span>
-        <span className="bar"><span style={{ width: `${Math.min(100, playing.length / game.perTeam * 100)}%`, background: t.color }} /></span>
+        <span className="bar"><span style={{ width: `${Math.min(100, playing.length / game.perTeam * 100)}%` }} /></span>
       </span>
       <span className="faint"><Icon d={I.chevron} w={2.2} /></span>
     </Tag>

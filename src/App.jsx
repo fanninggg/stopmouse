@@ -8,10 +8,10 @@ import Team from './Team'
 import Fixtures, { Results } from './Fixtures'
 
 const TEAMS = [
-  { id: 'scrumdog', name: 'Scrumdog Millionaires', color: '#FF8A3D' },
-  { id: 'tryhards', name: 'The Tryhards', color: '#4D8DFF' },
-  { id: 'wootag', name: 'Woo Tag Clan', color: '#FFD23F' },
-  { id: 'ruck', name: 'Ruck and Roll', color: '#3DDC97' },
+  { id: 'scrumdog', name: 'Scrumdog Millionaires' },
+  { id: 'tryhards', name: 'The Tryhards' },
+  { id: 'wootag', name: 'Woo Tag Clan' },
+  { id: 'ruck', name: 'Ruck and Roll' },
 ]
 const PAGES = { team: Team, fixtures: Fixtures, results: Results }
 const gameRef = doc(db, 'config', 'game')
