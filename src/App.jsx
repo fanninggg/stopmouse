@@ -7,6 +7,7 @@ import Main, { Join } from './Main'
 import Team from './Team'
 import Fixtures, { Results, played } from './Fixtures'
 import Admin from './Admin'
+import olives from './assets/olives.webp'
 
 const TEAMS = [
   { id: 'scrumdog', name: 'Scrumdog Millionaires' },
@@ -44,7 +45,13 @@ export default function App() {
   return (
     <main className="page signin">
       <p className="wordmark">StopMouse</p>
-      <button className="primary" onClick={signIn}>Sign in with Google</button>
+      <div className="stack">
+        <button className="primary" onClick={signIn}>Sign in with Google</button>
+        <figure>
+          <img src={olives} alt="Three tins of Perelló Gordal Picante olives" />
+          <figcaption><span>Not</span> Sponsored By Perelló</figcaption>
+        </figure>
+      </div>
     </main>
   )
 }
