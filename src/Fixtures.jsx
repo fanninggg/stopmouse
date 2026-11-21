@@ -3,12 +3,12 @@ import { db } from './firebase'
 import { useApp, Side, Week, fmtDate, fmtTime } from './ui'
 
 export const played = f => f.hs !== '' && f.as !== ''
-const byDate = (list, newestFirst) =>
+export const byDate = (list, newestFirst) =>
   Object.entries(Object.groupBy(list.toSorted((a, b) => a.time.localeCompare(b.time)), f => f.date))
     .sort(([a], [b]) => newestFirst ? b.localeCompare(a) : a.localeCompare(b))
 
 // One sheet adds, edits and scores a fixture. Leave scores blank until it's played.
-function useFixtureSheet() {
+export function useFixtureSheet() {
   const { teams, game, open } = useApp()
   const options = teams.map(t => ({ value: t.id, label: t.name }))
   return (f = { date: game.date, time: game.time, venue: game.venue, home: teams[0].id, away: teams[1].id }) => open({
@@ -28,26 +28,25 @@ function useFixtureSheet() {
   })
 }
 
-function Match({ f }) {
-  const { teams, isAdmin } = useApp()
-  const edit = useFixtureSheet()
+export function Match({ f, onClick }) {
+  const { teams } = useApp()
+  const Tag = onClick ? 'button' : 'div'
   const team = id => teams.find(t => t.id === id)
   const done = played(f)
   const outcome = diff => done ? (diff > 0 ? 'win' : diff < 0 ? 'lose' : '') : ''
   return (
-    <button className={`item match ${done ? 'result' : ''}`} disabled={!isAdmin} onClick={() => edit(f)}>
+    <Tag className={`item match ${done ? 'result' : ''}`} onClick={onClick}>
       {!done && <span className="muted small time">{fmtTime(f.time)}</span>}
       <Side t={team(f.home)} right cls={outcome(f.hs - f.as)} />
       <span className={done ? 'num mid' : 'muted small mid'}>{done ? `${f.hs} – ${f.as}` : 'v'}</span>
       <Side t={team(f.away)} cls={outcome(f.as - f.hs)} />
       {!done && <span className="muted small where">{f.venue}</span>}
-    </button>
+    </Tag>
   )
 }
 
 export default function Fixtures() {
-  const { game, fixtures, isAdmin } = useApp()
-  const add = useFixtureSheet()
+  const { game, fixtures } = useApp()
   return (
     <>
       <header className="stack">
@@ -59,7 +58,6 @@ export default function Fixtures() {
           {list.map(f => <Match key={f.id} f={f} />)}
         </Week>
       ))}
-      {isAdmin && <button className="ghost" onClick={() => add()}>Add fixture</button>}
     </>
   )
 }

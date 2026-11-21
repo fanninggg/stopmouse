@@ -1,4 +1,4 @@
-import { arrayRemove, arrayUnion, doc, updateDoc } from 'firebase/firestore'
+import { doc, updateDoc } from 'firebase/firestore'
 import { db } from './firebase'
 import { useApp, Icon, I, Bib, Week, answer, fmtDate, fmtTime, initials } from './ui'
 
@@ -9,7 +9,7 @@ const Toggle = ({ kind, d, label, pressed, ...props }) => (
 )
 
 export default function Team({ id }) {
-  const { teams, users, game, me, isAdmin, open, join, saveGame, nextMatch } = useApp()
+  const { teams, users, game, me, join, nextMatch } = useApp()
   const t = teams.find(t => t.id === id)
   if (!t) return null
 
@@ -18,21 +18,12 @@ export default function Team({ id }) {
   const players = users.filter(u => u.team === id)
   const inCount = players.filter(u => answer(match, u) === 'in').length
   const setAnswer = (u, s) => updateDoc(doc(db, 'fixtures', match.id), { [`avail.${u.id}`]: answer(match, u) === s ? '' : s })
-  const isAdminUser = u => game.admins.includes(u.id)
-  const toggleAdmin = u => saveGame({ admins: (isAdminUser(u) ? arrayRemove : arrayUnion)(u.id) })
-  const rename = () => open({
-    title: 'Edit team', values: t, fields: [{ key: 'name', label: 'Name' }],
-    onSave: v => saveGame({ [`teams.${id}`]: v.name }),
-  })
 
   return (
     <>
       <nav className="row">
         <a href="#/" className="back"><Icon d={I.back} size={20} w={2.2} />This week</a>
-        <span className="row">
-          {me.team !== id && <button className="link" onClick={() => join(id)}>Switch team</button>}
-          {isAdmin && <button className="pill" onClick={rename}>Edit team</button>}
-        </span>
+        {me.team !== id && <button className="link" onClick={() => join(id)}>Switch team</button>}
       </nav>
 
       <header className="stack">
@@ -64,9 +55,8 @@ export default function Team({ id }) {
                 <span className="face">{initials(u.name)}</span>
                 <span className="grow name">{u.name}</span>
                 <span role="group" aria-label={`${u.name} availability`} className="row">
-                  {isAdmin && <Toggle kind="admin" d={I.star} label={`${u.name} is an admin`} pressed={isAdminUser(u)} disabled={u.id === me.id} onClick={() => toggleAdmin(u)} />}
                   {['in', 'out'].map(s => (
-                    <Toggle key={s} kind={s} d={s === 'in' ? I.tick : I.cross} label={`${u.name} is ${s}`} pressed={answer(match, u) === s} disabled={u.id !== me.id && !isAdmin} onClick={() => setAnswer(u, s)} />
+                    <Toggle key={s} kind={s} d={s === 'in' ? I.tick : I.cross} label={`${u.name} is ${s}`} pressed={answer(match, u) === s} disabled={u.id !== me.id} onClick={() => setAnswer(u, s)} />
                   ))}
                 </span>
               </div>

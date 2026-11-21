@@ -6,6 +6,7 @@ import { AppContext, Sheet, TabBar } from './ui'
 import Main, { Join } from './Main'
 import Team from './Team'
 import Fixtures, { Results, played } from './Fixtures'
+import Admin from './Admin'
 
 const TEAMS = [
   { id: 'scrumdog', name: 'Scrumdog Millionaires' },
@@ -13,7 +14,7 @@ const TEAMS = [
   { id: 'wootag', name: 'Woo Tag Clan' },
   { id: 'ruck', name: 'Ruck and Roll' },
 ]
-const PAGES = { team: Team, fixtures: Fixtures, results: Results }
+const PAGES = { team: Team, fixtures: Fixtures, results: Results, admin: Admin }
 const gameRef = doc(db, 'config', 'game')
 const usersRef = collection(db, 'users')
 const fixturesRef = collection(db, 'fixtures')
@@ -81,7 +82,7 @@ function Live({ user }) {
     nextMatch: team => upcoming.find(f => [f.home, f.away].includes(team)),
     join: team => setDoc(doc(db, 'users', user.uid), { name: user.displayName || user.email, team }, { merge: true }),
   }
-  const Page = PAGES[page] || Main
+  const Page = (page !== 'admin' || app.isAdmin) && PAGES[page] || Main
 
   return (
     <AppContext.Provider value={app}>

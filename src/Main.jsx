@@ -1,7 +1,5 @@
 import { useApp, Icon, I, Bib, answer, fmtDate, fmtTime, initials } from './ui'
 
-const addWeek = date => new Date(Date.parse(date) + 7 * 864e5).toISOString().slice(0, 10)
-
 function TeamRow({ t }) {
   const { users, game, nextMatch } = useApp()
   const match = nextMatch(t.id)
@@ -52,35 +50,17 @@ export function Join() {
 }
 
 export default function Main() {
-  const { game, teams, users, isAdmin, open, saveGame, nextMatch } = useApp()
-  const editGame = () => open({
-    title: 'Game details', values: game, onSave: saveGame,
-    note: 'Changing the date starts a fresh week and clears drinks.',
-    fields: [
-      { key: 'name', label: 'Name' },
-      { key: 'date', label: 'Date', type: 'date', half: true },
-      { key: 'time', label: 'Kick-off', type: 'time', half: true },
-      { key: 'venue', label: 'Where' },
-      { key: 'perTeam', label: 'Players per team', type: 'stepper', min: 1, max: 11 },
-    ],
-  })
-  const editDrinks = () => open({
-    title: 'Drinks after', values: game, onSave: saveGame,
-    fields: [{ key: 'pub', label: 'Pub' }, { key: 'pubNote', label: 'Details', optional: true }],
-  })
+  const { game, teams, users, isAdmin, nextMatch } = useApp()
 
   return (
     <>
       <p className="wordmark">StopMouse</p>
 
       <section className="hero">
-        <div className="row top">
-          <div className="stack">
-            <p className="eyebrow">{fmtDate(game.date)}</p>
-            <h1>{fmtTime(game.time)}</h1>
-            {game.venue && <p className="venue"><Icon d={I.pin} size={16} />{game.venue}</p>}
-          </div>
-          {isAdmin && <button className="round dark" aria-label="Edit game details" onClick={editGame}><Icon d={I.pencil} /></button>}
+        <div className="stack">
+          <p className="eyebrow">{fmtDate(game.date)}</p>
+          <h1>{fmtTime(game.time)}</h1>
+          {game.venue && <p className="venue"><Icon d={I.pin} size={16} />{game.venue}</p>}
         </div>
         <hr />
         <div className="row">
@@ -103,7 +83,6 @@ export default function Main() {
               <span className="name">{game.pub || 'Not booked yet'}</span>
               {game.pubNote && <span className="muted small">{game.pubNote}</span>}
             </span>
-            {isAdmin && <button className="pill" onClick={editDrinks}>Change</button>}
             {game.pub && (
               <a className="round" href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(game.pub)}`} aria-label={`Open ${game.pub} in Maps`}>
                 <Icon d={I.arrow} />
@@ -113,12 +92,7 @@ export default function Main() {
         </div>
       </section>
 
-      {isAdmin && (
-        <section>
-          <button className="ghost" onClick={() => saveGame({ date: addWeek(game.date) })}>Start next week</button>
-          <p className="muted small center">Moves the date on 7 days and clears drinks.</p>
-        </section>
-      )}
+      {isAdmin && <a className="fab" href="#/admin" aria-label="Admin settings"><Icon d={I.cog} size={22} /></a>}
     </>
   )
 }
