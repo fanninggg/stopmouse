@@ -17,4 +17,10 @@ npm install
 npm run dev
 ```
 
-When you host it somewhere, add that domain under Authentication → Settings → Authorised domains.
+## Host on Vercel
+
+1. At [vercel.com/new](https://vercel.com/new), import this repo. Vercel spots Vite on its own; leave the build settings as they are.
+2. Before you deploy, add the four `VITE_` values from `.env` under **Environment Variables**.
+3. Deploy, then add the site's domain (e.g. `stopmouse.vercel.app`) in Firebase under Authentication → Settings → Authorised domains.
+
+Every push to `main` goes live.
