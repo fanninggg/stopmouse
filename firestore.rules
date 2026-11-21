@@ -1,0 +1,21 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{db}/documents {
+    function signedIn() { return request.auth != null; }
+    function isAdmin() { return request.auth.uid in get(/databases/$(db)/documents/config/game).data.admins; }
+
+    match /config/game {
+      allow read: if signedIn();
+      allow create: if request.resource.data.admins == [request.auth.uid];
+      allow update: if isAdmin();
+    }
+    match /users/{uid} {
+      allow read: if signedIn();
+      allow write: if request.auth.uid == uid || isAdmin();
+    }
+    match /fixtures/{id} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+  }
+}
