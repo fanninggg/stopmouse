@@ -54,6 +54,7 @@ function Live({ user }) {
   const fixtures = useLive(fixturesRef)
   const [sheet, open] = useState(null)
   const [, page = '', id] = useHash()
+  useEffect(() => open(null), [page, id])
 
   // The first person to sign in creates the game and becomes admin
   useEffect(() => {
