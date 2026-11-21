@@ -16,6 +16,9 @@ service cloud.firestore {
     match /fixtures/{id} {
       allow read: if signedIn();
       allow write: if isAdmin();
+      // Players may only set their own availability
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['avail'])
+        && request.resource.data.avail.diff(resource.data.get('avail', {})).affectedKeys().hasOnly([request.auth.uid]);
     }
   }
 }

@@ -1,6 +1,6 @@
 import { arrayRemove, arrayUnion, doc, updateDoc } from 'firebase/firestore'
 import { db } from './firebase'
-import { useApp, Icon, I, Bib, Week, fmtDate, fmtTime, initials } from './ui'
+import { useApp, Icon, I, Bib, Week, answer, fmtDate, fmtTime, initials } from './ui'
 
 const GROUPS = [['Playing', 'in'], ['Yet to reply', ''], ['Out', 'out']]
 
@@ -9,15 +9,15 @@ const Toggle = ({ kind, d, label, pressed, ...props }) => (
 )
 
 export default function Team({ id }) {
-  const { teams, users, fixtures, game, me, isAdmin, open, join, saveGame } = useApp()
+  const { teams, users, game, me, isAdmin, open, join, saveGame, nextMatch } = useApp()
   const t = teams.find(t => t.id === id)
   if (!t) return null
 
-  const match = fixtures.find(f => f.date === game.date && [f.home, f.away].includes(id))
+  const match = nextMatch(id)
   const rival = match && teams.find(r => r.id === (match.home === id ? match.away : match.home))
   const players = users.filter(u => u.team === id)
-  const inCount = players.filter(u => u.status === 'in').length
-  const setStatus = (u, status) => updateDoc(doc(db, 'users', u.id), { status: u.status === status ? '' : status })
+  const inCount = players.filter(u => answer(match, u) === 'in').length
+  const setAnswer = (u, s) => updateDoc(doc(db, 'fixtures', match.id), { [`avail.${u.id}`]: answer(match, u) === s ? '' : s })
   const isAdminUser = u => game.admins.includes(u.id)
   const toggleAdmin = u => saveGame({ admins: (isAdminUser(u) ? arrayRemove : arrayUnion)(u.id) })
   const rename = () => open({
@@ -46,15 +46,17 @@ export default function Team({ id }) {
               <p className="venue muted"><Icon d={I.pin} size={16} />{match.venue}</p>
             </div>
           </div>
-        ) : <h1>No game this week</h1>}
-        <p><span className="num">{inCount} of {game.perTeam}</span> <span className="muted">in</span></p>
-        <div className="segs" style={{ gridTemplateColumns: `repeat(${game.perTeam}, 1fr)` }}>
-          {Array.from({ length: game.perTeam }, (_, i) => <span key={i} className={i < inCount ? 'on' : ''} />)}
-        </div>
+        ) : <h1>No game coming up</h1>}
+        {match && <p><span className="num">{inCount} of {game.perTeam}</span> <span className="muted">in</span></p>}
+        {match && (
+          <div className="segs" style={{ gridTemplateColumns: `repeat(${game.perTeam}, 1fr)` }}>
+            {Array.from({ length: game.perTeam }, (_, i) => <span key={i} className={i < inCount ? 'on' : ''} />)}
+          </div>
+        )}
       </header>
 
-      {GROUPS.map(([label, status]) => {
-        const list = players.filter(u => (u.status || '') === status)
+      {match && GROUPS.map(([label, status]) => {
+        const list = players.filter(u => answer(match, u) === status)
         return list.length > 0 && (
           <Week key={label} title={`${label} · ${list.length}`}>
             {list.map(u => (
@@ -64,7 +66,7 @@ export default function Team({ id }) {
                 <span role="group" aria-label={`${u.name} availability`} className="row">
                   {isAdmin && <Toggle kind="admin" d={I.star} label={`${u.name} is an admin`} pressed={isAdminUser(u)} disabled={u.id === me.id} onClick={() => toggleAdmin(u)} />}
                   {['in', 'out'].map(s => (
-                    <Toggle key={s} kind={s} d={s === 'in' ? I.tick : I.cross} label={`${u.name} is ${s}`} pressed={u.status === s} disabled={u.id !== me.id && !isAdmin} onClick={() => setStatus(u, s)} />
+                    <Toggle key={s} kind={s} d={s === 'in' ? I.tick : I.cross} label={`${u.name} is ${s}`} pressed={answer(match, u) === s} disabled={u.id !== me.id && !isAdmin} onClick={() => setAnswer(u, s)} />
                   ))}
                 </span>
               </div>

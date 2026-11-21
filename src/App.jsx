@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import { onAuthStateChanged } from 'firebase/auth'
-import { collection, doc, onSnapshot, runTransaction, setDoc, writeBatch } from 'firebase/firestore'
+import { collection, doc, onSnapshot, runTransaction, setDoc, updateDoc } from 'firebase/firestore'
 import { auth, db, signIn } from './firebase'
 import { AppContext, Sheet, TabBar } from './ui'
 import Main, { Join } from './Main'
 import Team from './Team'
-import Fixtures, { Results } from './Fixtures'
+import Fixtures, { Results, played } from './Fixtures'
 
 const TEAMS = [
   { id: 'scrumdog', name: 'Scrumdog Millionaires' },
@@ -69,16 +69,16 @@ function Live({ user }) {
 
   const me = users.find(u => u.id === user.uid)
   const saveGame = changes => {
-    const batch = writeBatch(db)
     const newWeek = changes.date && changes.date !== game.date
-    batch.update(gameRef, newWeek ? { ...changes, pub: '', pubNote: '' } : changes)
-    if (newWeek) users.forEach(u => batch.update(doc(db, 'users', u.id), { status: '' }))
-    return batch.commit()
+    return updateDoc(gameRef, newWeek ? { ...changes, pub: '', pubNote: '' } : changes)
   }
+  const today = new Date().toISOString().slice(0, 10)
+  const upcoming = fixtures.filter(f => !played(f) && f.date >= today).sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time))
   const app = {
     game, users, fixtures, me, open, saveGame,
     teams: TEAMS.map(t => ({ ...t, name: game.teams?.[t.id] || t.name })),
     isAdmin: game.admins.includes(user.uid),
+    nextMatch: team => upcoming.find(f => [f.home, f.away].includes(team)),
     join: team => setDoc(doc(db, 'users', user.uid), { name: user.displayName || user.email, team }, { merge: true }),
   }
   const Page = PAGES[page] || Main

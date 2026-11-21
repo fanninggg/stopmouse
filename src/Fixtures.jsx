@@ -1,8 +1,8 @@
-import { addDoc, collection, deleteDoc, doc, setDoc } from 'firebase/firestore'
+import { addDoc, collection, deleteDoc, doc, updateDoc } from 'firebase/firestore'
 import { db } from './firebase'
 import { useApp, Side, Week, fmtDate, fmtTime } from './ui'
 
-const played = f => f.hs !== '' && f.as !== ''
+export const played = f => f.hs !== '' && f.as !== ''
 const byDate = (list, newestFirst) =>
   Object.entries(Object.groupBy(list.toSorted((a, b) => a.time.localeCompare(b.time)), f => f.date))
     .sort(([a], [b]) => newestFirst ? b.localeCompare(a) : a.localeCompare(b))
@@ -23,7 +23,7 @@ function useFixtureSheet() {
       { key: 'hs', label: 'Home score', type: 'number', optional: true, half: true },
       { key: 'as', label: 'Away score', type: 'number', optional: true, half: true },
     ],
-    onSave: v => f.id ? setDoc(doc(db, 'fixtures', f.id), v) : addDoc(collection(db, 'fixtures'), v),
+    onSave: v => f.id ? updateDoc(doc(db, 'fixtures', f.id), v) : addDoc(collection(db, 'fixtures'), v),
     onDelete: f.id && (() => deleteDoc(doc(db, 'fixtures', f.id))),
   })
 }

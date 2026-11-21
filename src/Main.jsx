@@ -1,12 +1,13 @@
-import { useApp, Icon, I, Bib, fmtDate, fmtTime, initials } from './ui'
+import { useApp, Icon, I, Bib, answer, fmtDate, fmtTime, initials } from './ui'
 
 const addWeek = date => new Date(Date.parse(date) + 7 * 864e5).toISOString().slice(0, 10)
 
 function TeamRow({ t }) {
-  const { users, game } = useApp()
+  const { users, game, nextMatch } = useApp()
+  const match = nextMatch(t.id)
   const players = users.filter(u => u.team === t.id)
-  const playing = players.filter(u => u.status === 'in')
-  const waiting = players.filter(u => !u.status).length
+  const playing = players.filter(u => answer(match, u) === 'in')
+  const waiting = players.filter(u => !answer(match, u)).length
   return (
     <a className="item" href={`#/team/${t.id}`}>
       <Bib t={t} size="lg" />
@@ -51,10 +52,10 @@ export function Join() {
 }
 
 export default function Main() {
-  const { game, teams, users, isAdmin, open, saveGame } = useApp()
+  const { game, teams, users, isAdmin, open, saveGame, nextMatch } = useApp()
   const editGame = () => open({
     title: 'Game details', values: game, onSave: saveGame,
-    note: "Changing the date starts a fresh week. Who's in and drinks reset.",
+    note: 'Changing the date starts a fresh week and clears drinks.',
     fields: [
       { key: 'name', label: 'Name' },
       { key: 'date', label: 'Date', type: 'date', half: true },
@@ -83,7 +84,7 @@ export default function Main() {
         </div>
         <hr />
         <div className="row">
-          <p><span className="big">{users.filter(u => u.status === 'in').length}</span> of {game.perTeam * teams.length} playing</p>
+          <p><span className="big">{users.filter(u => answer(nextMatch(u.team), u) === 'in').length}</span> of {game.perTeam * teams.length} playing</p>
           <p>{game.name}</p>
         </div>
       </section>
@@ -115,7 +116,7 @@ export default function Main() {
       {isAdmin && (
         <section>
           <button className="ghost" onClick={() => saveGame({ date: addWeek(game.date) })}>Start next week</button>
-          <p className="muted small center">Moves the date on 7 days and clears who's in and drinks.</p>
+          <p className="muted small center">Moves the date on 7 days and clears drinks.</p>
         </section>
       )}
     </>

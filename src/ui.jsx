@@ -8,6 +8,8 @@ export const fmtTime = time => {
   const [h, m] = time.split(':')
   return `${h % 12 || 12}:${m}${h < 12 ? 'am' : 'pm'}`
 }
+// A player's answer for a fixture: 'in', 'out' or '' (not replied)
+export const answer = (match, u) => match?.avail?.[u.id] || ''
 export const initials = name => name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
 
 export const I = {
