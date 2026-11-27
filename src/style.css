@@ -109,6 +109,7 @@ section { display: flex; flex-direction: column; gap: 10px }
 .tabs { position: fixed; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 8px 12px 26px; background: var(--surface); border-top: 1px solid var(--border) }
 .tabs a { min-height: 52px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 12px; font-weight: 500; color: var(--muted) }
 .tabs a[aria-current] { background: #2A1A20; font-weight: 700; color: var(--pink) }
+.tabs a.admin-tab { display: none }
 .desktop-only { display: none }
 
 .scrim { position: fixed; inset: 0; z-index: 1; display: flex; align-items: flex-end; justify-content: center; background: rgba(12, 9, 9, .7) }
@@ -130,8 +131,18 @@ section { display: flex; flex-direction: column; gap: 10px }
   .page { padding: 48px 32px }
   .tabs, .desktop-only { top: 0; right: auto; width: 220px; display: flex; flex-direction: column; padding: 32px 16px; border-top: 0; border-right: 1px solid var(--border) }
   .tabs a { flex-direction: row; justify-content: flex-start; gap: 12px; padding: 0 16px; font-size: 15px }
+  .tabs a.admin-tab { display: flex }
   .scrim { align-items: center }
   .sheet { max-width: 440px; padding-top: 24px; border: 1px solid var(--border); border-radius: 28px }
   .grab { display: none }
   .fab { right: 32px; bottom: 32px }
+
+  /* Signin only: two columns on desktop, mobile layout above is untouched */
+  .signin { max-width: 960px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto auto; align-content: center; column-gap: 64px; row-gap: 24px; padding: 48px 32px }
+  .signin .wordmark { grid-column: 1; grid-row: 1; align-self: end; justify-self: start; font-size: 64px }
+  /* Lets the button and figure become separate grid items, so they can sit in different columns */
+  .signin .stack { display: contents }
+  .signin .primary { grid-column: 1; grid-row: 2; align-self: start; justify-self: start }
+  .signin figure { grid-column: 2; grid-row: 1 / span 2; align-self: center; justify-self: center }
+  .signin img { max-width: 420px }
 }

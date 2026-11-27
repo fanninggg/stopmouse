@@ -3,7 +3,7 @@ import { onAuthStateChanged } from 'firebase/auth'
 import { collection, doc, onSnapshot, runTransaction, setDoc, updateDoc } from 'firebase/firestore'
 import { auth, db, signIn } from './firebase'
 import { AppContext, Sheet, TabBar } from './ui'
-import Main, { Join } from './Main'
+import Main, { Join } from './Home'
 import Team from './Team'
 import Fixtures, { Results, played } from './Fixtures'
 import Admin from './Admin'
@@ -68,7 +68,7 @@ function Live({ user }) {
   useEffect(() => {
     runTransaction(db, async tx => {
       if (!(await tx.get(gameRef)).exists()) {
-        tx.set(gameRef, { name: 'Weekly game', date: new Date().toISOString().slice(0, 10), time: '19:00', venue: '', perTeam: 5, pub: '', pubNote: '', admins: [user.uid] })
+        tx.set(gameRef, { name: 'Weekly game', date: '', time: '', venue: '', perTeam: 5, admins: [user.uid] })
       }
     })
   }, [user.uid])
@@ -76,10 +76,7 @@ function Live({ user }) {
   if (!game || !users || !fixtures) return null
 
   const me = users.find(u => u.id === user.uid)
-  const saveGame = changes => {
-    const newWeek = changes.date && changes.date !== game.date
-    return updateDoc(gameRef, newWeek ? { ...changes, pub: '', pubNote: '' } : changes)
-  }
+  const saveGame = changes => updateDoc(gameRef, changes)
   const today = new Date().toISOString().slice(0, 10)
   const upcoming = fixtures.filter(f => !played(f) && f.date >= today).sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time))
   const app = {
@@ -89,7 +86,7 @@ function Live({ user }) {
     nextMatch: team => upcoming.find(f => [f.home, f.away].includes(team)),
     join: team => setDoc(doc(db, 'users', user.uid), { name: user.displayName || user.email, team }, { merge: true }),
   }
-  const Page = (page !== 'admin' || app.isAdmin) && PAGES[page] || Main
+  const Page = PAGES[page] || Main
 
   return (
     <AppContext.Provider value={app}>

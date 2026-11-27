@@ -50,17 +50,22 @@ export function Join() {
 }
 
 export default function Main() {
-  const { game, teams, users, isAdmin, nextMatch } = useApp()
+  const { game, teams, users, nextMatch } = useApp()
+  // The next game is the earliest upcoming fixture, not the game slot.
+  // Before any fixture exists there is no game to show.
+  const match = teams.map(t => nextMatch(t.id)).filter(Boolean)
+    .sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time))[0]
 
   return (
     <>
       <p className="wordmark">StopMouse</p>
 
+      {match ? (
       <section className="hero">
         <div className="stack">
-          <p className="eyebrow">{fmtDate(game.date)}</p>
-          <h1>{fmtTime(game.time)}</h1>
-          {game.venue && <p className="venue"><Icon d={I.pin} size={16} />{game.venue}</p>}
+          <p className="eyebrow">{fmtDate(match.date)}</p>
+          <h1>{fmtTime(match.time)}</h1>
+          {match.venue && <p className="venue"><Icon d={I.pin} size={16} />{match.venue}</p>}
         </div>
         <hr />
         <div className="row">
@@ -68,6 +73,19 @@ export default function Main() {
           <p>{game.name}</p>
         </div>
       </section>
+      ) : (
+      <section className="hero">
+        <div className="stack">
+          <p className="eyebrow">This week</p>
+          <h1>No game yet</h1>
+        </div>
+        <hr />
+        <div className="row">
+          <p>No fixtures yet</p>
+          <p>{game.name}</p>
+        </div>
+      </section>
+      )}
 
       <section>
         <h2>Teams</h2>
@@ -80,11 +98,11 @@ export default function Main() {
           <div className="item">
             <span className="tile"><Icon d={I.drink} size={20} /></span>
             <span className="grow stack">
-              <span className="name">{game.pub || 'Not booked yet'}</span>
-              {game.pubNote && <span className="muted small">{game.pubNote}</span>}
+              <span className="name">{match?.pub || 'Not booked yet'}</span>
+              {match?.pubNote && <span className="muted small">{match.pubNote}</span>}
             </span>
-            {game.pub && (
-              <a className="round" href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(game.pub)}`} aria-label={`Open ${game.pub} in Maps`}>
+            {match?.pub && (
+              <a className="round" href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(match.pub)}`} aria-label={`Open ${match.pub} in Maps`}>
                 <Icon d={I.arrow} />
               </a>
             )}
@@ -92,7 +110,7 @@ export default function Main() {
         </div>
       </section>
 
-      {isAdmin && <a className="fab" href="#/admin" aria-label="Admin settings"><Icon d={I.cog} size={22} /></a>}
+      <a className="fab" href="#/admin" aria-label="Settings"><Icon d={I.cog} size={22} /></a>
     </>
   )
 }
