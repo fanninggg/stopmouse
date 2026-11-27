@@ -1,5 +1,5 @@
 :root {
-  --bg: #131011;
+  --bg: #000;
   --surface: #1D1819;
   --raised: #2A2224;
   --border: #332A2C;
@@ -26,14 +26,13 @@ h2 { font-size: 26px; padding: 0 4px }
 h3 { padding: 0 4px; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted) }
 
 .page { max-width: 560px; margin: 0 auto; padding: 24px 16px 120px; display: flex; flex-direction: column; gap: 24px }
-.signin { min-height: 100vh; padding-bottom: 24px }
-.signin .wordmark { align-self: center; font-size: 40px }
-.signin .stack { flex: 1; justify-content: center; align-items: center; gap: 40px }
-.signin .primary { width: 100%; max-width: 320px }
-.signin figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 12px }
-.signin img { width: 100%; max-width: 300px }
-.signin figcaption { font-size: 13px; color: var(--muted) }
-.signin figcaption span { color: #3A3133 }
+.signin { min-height: 100vh; padding: 48px 0px 32px; justify-content: center; align-items: center; gap: 28px; text-align: center; background: #000 }
+.signin .wordmark { align-self: center; font-size: 48px; padding-right: 0 }
+.game-on-image { display: block; width: 100%; max-width: 560px; height: auto; margin: 82px 0 }
+.signin .primary { width: 100%; max-width: 340px; min-height: 60px; border-radius: 30px; font-size: 18px }
+.signin .sponsored { font-size: 15px; color: var(--muted) }
+.signin .sponsored span { position: relative; color: var(--muted) }
+.signin .sponsored span::after { content: ''; position: absolute; left: -3px; right: -3px; top: 55%; height: 2px; background: #FF7A3D; transform: rotate(-14deg) }
 section { display: flex; flex-direction: column; gap: 10px }
 .row { display: flex; align-items: center; justify-content: space-between; gap: 6px }
 .row.start { justify-content: flex-start; gap: 14px }
@@ -137,12 +136,9 @@ section { display: flex; flex-direction: column; gap: 10px }
   .grab { display: none }
   .fab { right: 32px; bottom: 32px }
 
-  /* Signin only: two columns on desktop, mobile layout above is untouched */
-  .signin { max-width: 960px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto auto; align-content: center; column-gap: 64px; row-gap: 24px; padding: 48px 32px }
-  .signin .wordmark { grid-column: 1; grid-row: 1; align-self: end; justify-self: start; font-size: 64px }
-  /* Lets the button and figure become separate grid items, so they can sit in different columns */
-  .signin .stack { display: contents }
-  .signin .primary { grid-column: 1; grid-row: 2; align-self: start; justify-self: start }
-  .signin figure { grid-column: 2; grid-row: 1 / span 2; align-self: center; justify-self: center }
-  .signin img { max-width: 420px }
+  /* Signin only: same centred column as mobile, just larger */
+  .signin { max-width: 720px; padding: 56px 32px 40px; gap: 32px }
+  .signin .wordmark { font-size: 64px }
+  .game-on-image { max-width: 640px }
+  .signin .primary { max-width: 400px }
 }

@@ -7,7 +7,7 @@ import Main, { Join } from './Home'
 import Team from './Team'
 import Fixtures, { Results, played } from './Fixtures'
 import Admin from './Admin'
-import olives from './assets/olives.webp'
+import gameOnOlives from './assets/game-on-olives.png'
 
 const TEAMS = [
   { id: 'scrumdog', name: 'Scrumdog Millionaires' },
@@ -45,13 +45,9 @@ export default function App() {
   return (
     <main className="page signin">
       <p className="wordmark">StopMouse</p>
-      <div className="stack">
-        <button className="primary" onClick={signIn}>Sign in with Google</button>
-        <figure>
-          <img src={olives} alt="Three tins of Perelló Gordal Picante olives" />
-          <figcaption><span>Not</span> Sponsored By Perelló</figcaption>
-        </figure>
-      </div>
+      <img className="game-on-image" src={gameOnOlives} alt="Game on. Three tins of Perelló Gordal Picante olives" />
+      <button className="primary" onClick={signIn}>Sign in with Google</button>
+      <p className="sponsored"><span>Not</span> Sponsored By Perelló</p>
     </main>
   )
 }
