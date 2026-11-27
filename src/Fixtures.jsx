@@ -9,9 +9,9 @@ export const byDate = (list, newestFirst) =>
 
 // One sheet adds, edits and scores a fixture. Leave scores blank until it's played.
 export function useFixtureSheet() {
-  const { teams, game, open } = useApp()
+  const { teams, open } = useApp()
   const options = teams.map(t => ({ value: t.id, label: t.name }))
-  return (f = { date: game.date, time: game.time, venue: game.venue, home: teams[0].id, away: teams[1].id }) => open({
+  return (f = { date: '', time: '', venue: '', home: teams[0].id, away: teams[1].id, pub: '', pubNote: '' }) => open({
     title: f.id ? 'Fixture' : 'Add fixture',
     values: f,
     fields: [
@@ -22,6 +22,8 @@ export function useFixtureSheet() {
       { key: 'away', label: 'Away', options, half: true },
       { key: 'hs', label: 'Home score', type: 'number', optional: true, half: true },
       { key: 'as', label: 'Away score', type: 'number', optional: true, half: true },
+      { key: 'pub', label: 'Drinks after: pub', optional: true },
+      { key: 'pubNote', label: 'Drinks after: details', optional: true },
     ],
     onSave: v => f.id ? updateDoc(doc(db, 'fixtures', f.id), v) : addDoc(collection(db, 'fixtures'), v),
     onDelete: f.id && (() => deleteDoc(doc(db, 'fixtures', f.id))),
@@ -54,7 +56,7 @@ export default function Fixtures() {
         <p className="muted">{game.name}</p>
       </header>
       {byDate(fixtures.filter(f => !played(f))).map(([date, list]) => (
-        <Week key={date} title={fmtDate(date)} badge={date === game.date && 'This week'}>
+        <Week key={date} title={fmtDate(date)}>
           {list.map(f => <Match key={f.id} f={f} />)}
         </Week>
       ))}

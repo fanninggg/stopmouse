@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app'
 import { getAnalytics, isSupported } from 'firebase/analytics'
-import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut as firebaseSignOut } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
 
 const env = import.meta.env
@@ -39,3 +39,4 @@ isSupported().then(ok => {
 export const auth = getAuth(app)
 export const db = getFirestore(app)
 export const signIn = () => signInWithPopup(auth, new GoogleAuthProvider())
+export const signOut = () => firebaseSignOut(auth)

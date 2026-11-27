@@ -50,13 +50,19 @@ export const Week = ({ title, badge, children }) => (
 
 const TABS = [['', 'This week', I.calendar], ['fixtures', 'Fixtures', I.list], ['results', 'Results', I.trophy]]
 
-export const TabBar = ({ page }) => (
-  <nav className={`tabs ${['team', 'admin'].includes(page) ? 'desktop-only' : ''}`} aria-label="Main">
-    {TABS.map(([p, label, d]) => (
-      <a key={p} href={`#/${p}`} aria-current={page === p ? 'page' : undefined}><Icon d={d} size={22} />{label}</a>
-    ))}
-  </nav>
-)
+export const TabBar = ({ page }) => {
+  const { isAdmin } = useApp()
+  return (
+    <nav className={`tabs ${['team', 'admin'].includes(page) ? 'desktop-only' : ''}`} aria-label="Main">
+      {TABS.map(([p, label, d]) => (
+        <a key={p} href={`#/${p}`} aria-current={page === p ? 'page' : undefined}><Icon d={d} size={22} />{label}</a>
+      ))}
+      {isAdmin && (
+        <a key="admin" className="admin-tab" href="#/admin" aria-current={page === 'admin' ? 'page' : undefined}><Icon d={I.cog} size={22} />Admin</a>
+      )}
+    </nav>
+  )
+}
 
 export function Sheet({ title, fields, values, note, onSave, onDelete, close }) {
   const [v, setV] = useState(values)
